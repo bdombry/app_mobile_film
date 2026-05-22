@@ -9,7 +9,11 @@ export function AppFooter() {
   const router = useRouter();
 
   return (
-    <SafeAreaView edges={["bottom"]} style={styles.safeArea} pointerEvents="box-none">
+    <SafeAreaView
+      edges={["bottom"]}
+      style={styles.safeArea}
+      pointerEvents="box-none"
+    >
       <View style={styles.container}>
         <Pressable
           onPress={() => router.push("/")}
