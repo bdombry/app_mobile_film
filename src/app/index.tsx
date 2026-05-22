@@ -92,6 +92,7 @@ export default function HomeScreen() {
             </Pressable>
 
             <Pressable
+              onPress={() => router.push("/recommend")} // ← ajoute ça
               style={({ pressed }) => [
                 styles.button,
                 styles.buttonSecondary,
