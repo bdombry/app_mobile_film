@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -7,6 +8,8 @@ import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
 import { INITIAL_MOVIES } from "@/data/movies";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   // Calculer les statistiques
   const totalCount = INITIAL_MOVIES.length;
   const moviesCount = INITIAL_MOVIES.filter((m) => m.type === "movie").length;
@@ -30,7 +33,8 @@ export default function HomeScreen() {
               Découvrez films et séries
             </ThemedText>
             <ThemedText style={styles.description}>
-              Explorez notre catalogue, trouvez vos favoris et recommandez vos meilleures découvertes.
+              Explorez notre catalogue, trouvez vos favoris et recommandez vos
+              meilleures découvertes.
             </ThemedText>
           </ThemedView>
 
@@ -75,6 +79,7 @@ export default function HomeScreen() {
           {/* Boutons d'action */}
           <ThemedView style={styles.buttonsContainer}>
             <Pressable
+              onPress={() => router.push("/explore")}
               style={({ pressed }) => [
                 styles.button,
                 styles.buttonPrimary,
