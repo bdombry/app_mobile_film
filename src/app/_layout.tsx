@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
 
 import { AnimatedSplashOverlay } from "@/components/animated-icon";
+import { AppFooter } from "@/components/app-footer";
 import { FavoritesProvider } from "@/context/favorites-context";
 
 export default function RootLayout() {
@@ -15,6 +16,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="detail/[id]" options={{ headerShown: false }} />
         </Stack>
+        <AppFooter />
       </FavoritesProvider>
     </ThemeProvider>
   );
