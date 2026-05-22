@@ -1,9 +1,10 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
-import { Movie } from '@/types/movie';
-import { StyleSheet, View, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Spacing } from "@/constants/theme";
+import { useFavorites } from "@/context/favorites-context";
+import { Movie } from "@/types/movie";
+import { StyleSheet, View, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 
 interface MovieCardProps {
   movie: Movie;
@@ -11,31 +12,49 @@ interface MovieCardProps {
 
 export function MovieCard({ movie }: MovieCardProps) {
   const router = useRouter();
+  const { isFavorite } = useFavorites();
+  const favorite = isFavorite(movie.id);
 
   return (
-    <Pressable onPress={() => router.push(`/detail/${movie.id}`)} style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}>
+    <Pressable
+      onPress={() => router.push(`/detail/${movie.id}`)}
+      style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
+    >
       <ThemedView style={styles.card}>
         <View style={styles.cardHeader}>
           <ThemedText type="subtitle" style={styles.cardTitle}>
             {movie.title}
           </ThemedText>
-          <ThemedText style={styles.cardType}>{movie.type === 'movie' ? '🎬' : '📺'}</ThemedText>
+          <ThemedText style={styles.cardType}>
+            {movie.type === "movie" ? "🎬" : "📺"}
+          </ThemedText>
+          {favorite ? (
+            <ThemedText style={styles.favoriteEmoji}>❤️</ThemedText>
+          ) : null}
         </View>
 
         <View style={styles.cardInfo}>
-          <ThemedText style={styles.infoText}>{movie.genre} • {movie.releaseYear}</ThemedText>
+          <ThemedText style={styles.infoText}>
+            {movie.genre} • {movie.releaseYear}
+          </ThemedText>
           <ThemedText style={styles.rating}>⭐ {movie.rating}</ThemedText>
         </View>
 
         <View style={styles.cardDetails}>
-          {movie.type === 'movie' ? (
-            <ThemedText style={styles.detailText}>{movie.durationMinutes} min</ThemedText>
+          {movie.type === "movie" ? (
+            <ThemedText style={styles.detailText}>
+              {movie.durationMinutes} min
+            </ThemedText>
           ) : (
-            <ThemedText style={styles.detailText}>{movie.seasonsCount} saison{movie.seasonsCount! > 1 ? 's' : ''}</ThemedText>
+            <ThemedText style={styles.detailText}>
+              {movie.seasonsCount} saison{movie.seasonsCount! > 1 ? "s" : ""}
+            </ThemedText>
           )}
         </View>
 
-        <ThemedText style={styles.description} numberOfLines={2}>{movie.description}</ThemedText>
+        <ThemedText style={styles.description} numberOfLines={2}>
+          {movie.description}
+        </ThemedText>
       </ThemedView>
     </Pressable>
   );
@@ -61,6 +80,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   cardType: {
+    fontSize: 18,
+  },
+  favoriteEmoji: {
     fontSize: 18,
   },
   cardInfo: {

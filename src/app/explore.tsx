@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -7,21 +7,28 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
 import { INITIAL_MOVIES } from "@/data/movies";
-import CatalogFilters from '@/components/catalog-filters';
+import { useFavorites } from "@/context/favorites-context";
+import CatalogFilters from "@/components/catalog-filters";
 
-type MovieTypeFilter = 'all' | 'movie' | 'series';
+type MovieTypeFilter = "all" | "movie" | "series";
 
 export default function CatalogScreen() {
-  const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState<MovieTypeFilter>('all');
-  const [genreFilter, setGenreFilter] = useState('');
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState<MovieTypeFilter>("all");
+  const [favoriteOnly, setFavoriteOnly] = useState(false);
+  const [genreFilter, setGenreFilter] = useState("");
+  const { favoriteIds } = useFavorites();
 
-  const genres = useMemo(() => Array.from(new Set(INITIAL_MOVIES.map((m) => m.genre))).sort(), []);
+  const genres = useMemo(
+    () => Array.from(new Set(INITIAL_MOVIES.map((m) => m.genre))).sort(),
+    [],
+  );
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return INITIAL_MOVIES.filter((m) => {
-      const matchesType = typeFilter === 'all' || m.type === typeFilter;
+      const matchesType = typeFilter === "all" || m.type === typeFilter;
+      const matchesFavorite = !favoriteOnly || favoriteIds.includes(m.id);
       const matchesGenre = !genreFilter || m.genre === genreFilter;
       const matchesQuery =
         !q ||
@@ -29,9 +36,9 @@ export default function CatalogScreen() {
         m.genre.toLowerCase().includes(q) ||
         m.creator.toLowerCase().includes(q) ||
         m.tags.some((t) => t.toLowerCase().includes(q));
-      return matchesType && matchesGenre && matchesQuery;
+      return matchesType && matchesFavorite && matchesGenre && matchesQuery;
     });
-  }, [search, typeFilter, genreFilter]);
+  }, [favoriteIds, favoriteOnly, search, typeFilter, genreFilter]);
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -44,12 +51,16 @@ export default function CatalogScreen() {
           setSearch={setSearch}
           typeFilter={typeFilter}
           setTypeFilter={setTypeFilter}
+          favoriteOnly={favoriteOnly}
+          setFavoriteOnly={setFavoriteOnly}
           genreFilter={genreFilter}
           setGenreFilter={setGenreFilter}
           genres={genres}
         />
 
-        <ThemedText style={styles.results}>{filtered.length} résultat{filtered.length>1?'s':''}</ThemedText>
+        <ThemedText style={styles.results}>
+          {filtered.length} résultat{filtered.length > 1 ? "s" : ""}
+        </ThemedText>
 
         <FlatList
           data={filtered}
@@ -58,7 +69,11 @@ export default function CatalogScreen() {
           scrollEnabled={true}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<View style={styles.empty}><ThemedText type="subtitle">Aucun résultat</ThemedText></View>}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <ThemedText type="subtitle">Aucun résultat</ThemedText>
+            </View>
+          }
         />
       </SafeAreaView>
     </ThemedView>
@@ -84,7 +99,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     opacity: 0.85,
   },
-  empty: { paddingVertical: Spacing.four, alignItems: 'center' },
+  empty: { paddingVertical: Spacing.four, alignItems: "center" },
   listContent: {
     gap: Spacing.three,
     paddingBottom: Spacing.four,

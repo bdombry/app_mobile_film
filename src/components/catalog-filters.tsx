@@ -1,16 +1,18 @@
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, TextInput, View } from "react-native";
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Spacing } from "@/constants/theme";
 
-type MovieTypeFilter = 'all' | 'movie' | 'series';
+type MovieTypeFilter = "all" | "movie" | "series";
 
 type Props = {
   search: string;
   setSearch: (value: string) => void;
   typeFilter: MovieTypeFilter;
   setTypeFilter: (value: MovieTypeFilter) => void;
+  favoriteOnly: boolean;
+  setFavoriteOnly: (value: boolean) => void;
   genreFilter: string;
   setGenreFilter: (value: string) => void;
   genres: string[];
@@ -21,6 +23,8 @@ export default function CatalogFilters({
   setSearch,
   typeFilter,
   setTypeFilter,
+  favoriteOnly,
+  setFavoriteOnly,
   genreFilter,
   setGenreFilter,
   genres,
@@ -35,33 +39,60 @@ export default function CatalogFilters({
         style={styles.input}
       />
 
+      <Pressable
+        onPress={() => setFavoriteOnly(!favoriteOnly)}
+        style={({ pressed }) => [
+          styles.toggleRow,
+          { opacity: pressed ? 0.85 : 1 },
+        ]}
+      >
+        <View style={styles.toggleTextBlock}>
+          <ThemedText style={styles.toggleLabel}>Favoris</ThemedText>
+          <ThemedText style={styles.toggleHint}>
+            Afficher seulement les titres favoris
+          </ThemedText>
+        </View>
+        <Switch
+          value={favoriteOnly}
+          onValueChange={setFavoriteOnly}
+          trackColor={{ false: "rgba(0,0,0,0.2)", true: "#6AA9FF" }}
+          thumbColor={favoriteOnly ? "#FFFFFF" : "#F4F4F4"}
+        />
+      </Pressable>
+
       <View style={styles.row}>
         <Pressable
-          onPress={() => setTypeFilter('all')}
-          style={[styles.chip, typeFilter === 'all' && styles.chipActive]}
+          onPress={() => setTypeFilter("all")}
+          style={[styles.chip, typeFilter === "all" && styles.chipActive]}
         >
           <ThemedText
-            style={typeFilter === 'all' ? styles.chipTextActive : styles.chipText}
+            style={
+              typeFilter === "all" ? styles.chipTextActive : styles.chipText
+            }
           >
             Tous
           </ThemedText>
         </Pressable>
         <Pressable
-          onPress={() => setTypeFilter('movie')}
-          style={[styles.chip, typeFilter === 'movie' && styles.chipActive]}
+          onPress={() => setTypeFilter("movie")}
+          style={[styles.chip, typeFilter === "movie" && styles.chipActive]}
         >
           <ThemedText
-            style={typeFilter === 'movie' ? styles.chipTextActive : styles.chipText}
+            style={
+              typeFilter === "movie" ? styles.chipTextActive : styles.chipText
+            }
           >
             Films
           </ThemedText>
         </Pressable>
         <Pressable
-          onPress={() => setTypeFilter('series')}
-          style={[styles.chip, typeFilter === 'series' && styles.chipActive]}
+          onPress={() => setTypeFilter("series")}
+          style={[styles.chip, typeFilter === "series" && styles.chipActive]}
         >
           <ThemedText
-            style={typeFilter === 'series' ? styles.chipTextActive : styles.chipText}
+            style={
+              typeFilter === "series" ? styles.chipTextActive : styles.chipText
+            }
           >
             Séries
           </ThemedText>
@@ -70,11 +101,11 @@ export default function CatalogFilters({
 
       <View style={styles.rowWrap}>
         <Pressable
-          onPress={() => setGenreFilter('')}
-          style={[styles.chip, genreFilter === '' && styles.chipActive]}
+          onPress={() => setGenreFilter("")}
+          style={[styles.chip, genreFilter === "" && styles.chipActive]}
         >
           <ThemedText
-            style={genreFilter === '' ? styles.chipTextActive : styles.chipText}
+            style={genreFilter === "" ? styles.chipTextActive : styles.chipText}
           >
             Tous
           </ThemedText>
@@ -87,7 +118,9 @@ export default function CatalogFilters({
             style={[styles.chip, genreFilter === genre && styles.chipActive]}
           >
             <ThemedText
-              style={genreFilter === genre ? styles.chipTextActive : styles.chipText}
+              style={
+                genreFilter === genre ? styles.chipTextActive : styles.chipText
+              }
             >
               {genre}
             </ThemedText>
@@ -105,38 +138,62 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.08)',
+    borderColor: "rgba(0,0,0,0.08)",
     borderRadius: Spacing.two,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
-    backgroundColor: 'rgba(255,255,255,0.95)',
+    backgroundColor: "rgba(255,255,255,0.95)",
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.two,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   rowWrap: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.two,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
+  },
+  toggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
+    borderRadius: Spacing.two,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.08)",
+    backgroundColor: "rgba(255,255,255,0.06)",
+  },
+  toggleTextBlock: {
+    flex: 1,
+    paddingRight: Spacing.three,
+    gap: 2,
+  },
+  toggleLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  toggleHint: {
+    fontSize: 12,
+    opacity: 0.7,
   },
   chip: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.08)',
+    borderColor: "rgba(0,0,0,0.08)",
   },
   chipActive: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
   },
   chipText: {
     fontSize: 13,
   },
   chipTextActive: {
     fontSize: 13,
-    color: '#fff',
+    color: "#fff",
   },
 });
