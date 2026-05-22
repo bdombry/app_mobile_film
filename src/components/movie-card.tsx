@@ -1,48 +1,43 @@
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
-import { Movie } from "@/types/movie";
-import { StyleSheet, View } from "react-native";
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { Spacing } from '@/constants/theme';
+import { Movie } from '@/types/movie';
+import { StyleSheet, View, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 
 interface MovieCardProps {
   movie: Movie;
 }
 
 export function MovieCard({ movie }: MovieCardProps) {
+  const router = useRouter();
+
   return (
-    <ThemedView style={styles.card}>
-      <View style={styles.cardHeader}>
-        <ThemedText type="subtitle" style={styles.cardTitle}>
-          {movie.title}
-        </ThemedText>
-        <ThemedText style={styles.cardType}>
-          {movie.type === "movie" ? "🎬" : "📺"}
-        </ThemedText>
-      </View>
-
-      <View style={styles.cardInfo}>
-        <ThemedText style={styles.infoText}>
-          {movie.genre} • {movie.releaseYear}
-        </ThemedText>
-        <ThemedText style={styles.rating}>⭐ {movie.rating}</ThemedText>
-      </View>
-
-      <View style={styles.cardDetails}>
-        {movie.type === "movie" ? (
-          <ThemedText style={styles.detailText}>
-            {movie.durationMinutes} min
+    <Pressable onPress={() => router.push(`/detail/${movie.id}`)} style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}>
+      <ThemedView style={styles.card}>
+        <View style={styles.cardHeader}>
+          <ThemedText type="subtitle" style={styles.cardTitle}>
+            {movie.title}
           </ThemedText>
-        ) : (
-          <ThemedText style={styles.detailText}>
-            {movie.seasonsCount} saison{movie.seasonsCount! > 1 ? "s" : ""}
-          </ThemedText>
-        )}
-      </View>
+          <ThemedText style={styles.cardType}>{movie.type === 'movie' ? '🎬' : '📺'}</ThemedText>
+        </View>
 
-      <ThemedText style={styles.description} numberOfLines={2}>
-        {movie.description}
-      </ThemedText>
-    </ThemedView>
+        <View style={styles.cardInfo}>
+          <ThemedText style={styles.infoText}>{movie.genre} • {movie.releaseYear}</ThemedText>
+          <ThemedText style={styles.rating}>⭐ {movie.rating}</ThemedText>
+        </View>
+
+        <View style={styles.cardDetails}>
+          {movie.type === 'movie' ? (
+            <ThemedText style={styles.detailText}>{movie.durationMinutes} min</ThemedText>
+          ) : (
+            <ThemedText style={styles.detailText}>{movie.seasonsCount} saison{movie.seasonsCount! > 1 ? 's' : ''}</ThemedText>
+          )}
+        </View>
+
+        <ThemedText style={styles.description} numberOfLines={2}>{movie.description}</ThemedText>
+      </ThemedView>
+    </Pressable>
   );
 }
 
